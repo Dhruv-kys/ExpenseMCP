@@ -4,7 +4,10 @@ import sqlite3
 
 mcp = FastMCP("Expense Tracker")
 
-DB_PATH = "/data/expense.db"
+DATA_DIR = "/data"
+DB_PATH = os.path.join(DATA_DIR, "expense.db")
+
+os.makedirs(DATA_DIR, exist_ok=True)
 
 def init_db():
     with sqlite3.connect(DB_PATH) as conn:
@@ -23,7 +26,6 @@ init_db()
 
 @mcp.tool
 def add_expense(date: str, amount: float, category: str, subcategory: str = "", note: str = ""):
-    """Add a new expense to the database"""
     with sqlite3.connect(DB_PATH) as conn:
         cur = conn.execute(
             """
@@ -36,7 +38,6 @@ def add_expense(date: str, amount: float, category: str, subcategory: str = "", 
 
 @mcp.tool
 def list_expense(start_date: str, end_date: str):
-    """List all expenses between two dates"""
     with sqlite3.connect(DB_PATH) as conn:
         cur = conn.execute(
             """
@@ -52,7 +53,6 @@ def list_expense(start_date: str, end_date: str):
 
 @mcp.tool
 def summarize(start_date: str, end_date: str, category: str | None = None):
-    """Summarize expenses by category within a date range"""
     with sqlite3.connect(DB_PATH) as conn:
         query = """
             SELECT category, SUM(amount) AS total_amount
