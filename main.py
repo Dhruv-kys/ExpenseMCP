@@ -4,13 +4,11 @@ import sqlite3
 
 mcp = FastMCP("Expense Tracker")
 
-DATA_DIR = "/data"
+
+DATA_DIR = "/tmp"
 DB_PATH = os.path.join(DATA_DIR, "expense_v2.db")
 
-os.makedirs(DATA_DIR, exist_ok=True)
 
-if os.path.exists(DB_PATH):
-    os.chmod(DB_PATH, 0o666)
 
 def init_db():
     with sqlite3.connect(DB_PATH) as conn:
