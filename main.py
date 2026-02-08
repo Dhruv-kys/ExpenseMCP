@@ -5,9 +5,12 @@ import sqlite3
 mcp = FastMCP("Expense Tracker")
 
 DATA_DIR = "/data"
-DB_PATH = os.path.join(DATA_DIR, "expense.db")
+DB_PATH = os.path.join(DATA_DIR, "expense_v2.db")
 
 os.makedirs(DATA_DIR, exist_ok=True)
+
+if os.path.exists(DB_PATH):
+    os.chmod(DB_PATH, 0o666)
 
 def init_db():
     with sqlite3.connect(DB_PATH) as conn:
@@ -25,7 +28,13 @@ def init_db():
 init_db()
 
 @mcp.tool
-def add_expense(date: str, amount: float, category: str, subcategory: str = "", note: str = ""):
+def add_expense(
+    date: str,
+    amount: float,
+    category: str,
+    subcategory: str = "",
+    note: str = ""
+):
     with sqlite3.connect(DB_PATH) as conn:
         cur = conn.execute(
             """
@@ -34,7 +43,10 @@ def add_expense(date: str, amount: float, category: str, subcategory: str = "", 
             """,
             (date, amount, category, subcategory, note)
         )
-        return {"status": "ok", "id": cur.lastrowid}
+        return {
+            "status": "ok",
+            "id": cur.lastrowid
+        }
 
 @mcp.tool
 def list_expense(start_date: str, end_date: str):
